@@ -1,0 +1,8 @@
+---
+roles:
+  - name: geerlingguy.git
+  - name: geerlingguy.docker
+  - name: geerlingguy.nodejs
+
+collections:
+  - name: community.docker

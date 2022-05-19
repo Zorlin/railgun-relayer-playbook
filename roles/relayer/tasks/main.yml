@@ -1,0 +1,52 @@
+---
+# Install the Railgun Relayer
+- name: Create a Railgun system user
+  ansible.builtin.user:
+    name: railgun
+    comment: Railgun Relayer
+    groups: docker
+    append: true
+
+- name: Check out the Railgun repository
+  ansible.builtin.git:
+    repo: git@github.com:Railgun-Community/relayer.git
+    dest: /home/railgun/relayer
+  become: true
+  become_user: railgun
+
+- name: Initialise Docker Swarm if needed
+  community.docker.docker_swarm:
+    state: present
+
+- name: Check what secrets exist already
+  command:
+    cmd: "docker secret ls"
+  register: docker_secrets
+
+- name: Generate and store DB_ENCRYPTION_KEY secret if needed
+  command:
+    cmd: "./docker/nodekey.sh | docker secret create DB_ENCRYPTION_KEY -"
+    chdir: "/home/railgun/relayer"
+  when: DB_ENCRYPTION_KEY not in docker_secrets
+
+- name: Generate and store nodekey secret if needed
+  command:
+    cmd: "./docker/nodekey.sh | docker secret create nodekey -"
+    chdir: "/home/railgun/relayer"
+  when: nodekey not in docker_secrets
+
+- name: Register MNEMONIC secret if needed
+  community.docker.docker_secret:
+    name: MNEMONIC
+    data: "{{ railgun_seed }}"
+    state: present
+
+- name: Build Docker images
+  command:
+    cmd: "./docker/build.sh"
+    chdir: "/home/railgun/relayer"
+
+- name: Run Docker images
+  command:
+    cmd: "./docker/run.sh"
+    chdir: "/home/railgun/relayer"

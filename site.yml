@@ -1,0 +1,24 @@
+---
+# file: site.yml
+
+- hosts: railgun_relayer
+  become: true
+
+  vars_files:
+    - vars/settings.yml
+
+  vars:
+    nodejs_version: "16.x"
+    mode: swarm
+
+  roles:
+  - geerlingguy.git
+  - geerlingguy.docker
+  - geerlingguy.nodejs
+  - relayer
+
+  tasks:
+    - debug:
+        msg:
+          - "If you're reading this, Railgun Relayer has been successfully deployed."
+          - "Let us know if it worked, and feel free to reach out if you need help. Enjoy!"
