@@ -40,7 +40,8 @@
     name: MNEMONIC
     data: "{{ railgun_seed }}"
     state: present
-
+  when: MNEMONIC not in docker_secrets
+  
 - name: Build Docker images
   command:
     cmd: "./docker/build.sh"

@@ -11,6 +11,11 @@
     nodejs_version: "16.x"
     mode: swarm
 
+  vars_prompt:
+    - name: railgun_seed
+      prompt: "Please enter your seed. This will be securely stored. "
+      private: true
+      
   roles:
   - geerlingguy.git
   - geerlingguy.docker
