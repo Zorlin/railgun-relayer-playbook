@@ -36,7 +36,7 @@ railgun.windowpa.in
 
 * Now you're ready to rock! Run Ansible, fill in the details it asks for and watch as it sets up your relayer.
 
-`ansible-playbook site.yml`
+`ansible-playbook site.yml --ask-become-pass`
 
 * You should see a message like this once Ansible finishes, indicating a successful run:
 
