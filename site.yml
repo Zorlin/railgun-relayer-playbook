@@ -4,8 +4,8 @@
 - hosts: railgun_relayer
   become: true
 
-  vars_files:
-    - vars/settings.yml
+  # vars_files:
+  #   - vars/settings.yml
 
   vars:
     nodejs_version: "16.x"
@@ -13,7 +13,7 @@
 
   vars_prompt:
     - name: railgun_seed
-      prompt: "Please enter your seed. This will be securely stored. "
+      prompt: "Please enter your seed. This will be securely stored"
       private: true
       
   roles:

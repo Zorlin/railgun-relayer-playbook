@@ -1,9 +1,26 @@
 ---
 # Install the Railgun Relayer
+- name: Install prerequisite packages
+  package:
+    name:
+      - acl
+      - python3-pip
+    state: present
+
+- name: Install prerequisite python packages
+  pip:
+    name: docker
+    executable: pip3
+
+# Gather IP facts from ipify.org
+- name: Get node's public IP
+  community.general.ipify_facts:
+
 - name: Create a Railgun system user
   ansible.builtin.user:
     name: railgun
     comment: Railgun Relayer
+    shell: /bin/bash
     groups: docker
     append: true
 
@@ -24,24 +41,37 @@
   register: docker_secrets
 
 - name: Generate and store DB_ENCRYPTION_KEY secret if needed
-  command:
+  shell:
     cmd: "./docker/nodekey.sh | docker secret create DB_ENCRYPTION_KEY -"
     chdir: "/home/railgun/relayer"
-  when: DB_ENCRYPTION_KEY not in docker_secrets
+  when: '"DB_ENCRYPTION_KEY" not in docker_secrets.stdout'
 
 - name: Generate and store nodekey secret if needed
-  command:
-    cmd: "./docker/nodekey.sh | docker secret create nodekey -"
+  shell:
+    cmd: "./docker/nodekey.sh | docker secret create NODEKEY -"
     chdir: "/home/railgun/relayer"
-  when: nodekey not in docker_secrets
+  when: '"NODEKEY" not in docker_secrets.stdout'
+
+- name: Create Railgun facts
+  set_fact:
+    railgun_public_ip: "{{ ipify_public_ip }}"
+    railgun_listen_ip: "{{ ipify_public_ip }}"
 
 - name: Register MNEMONIC secret if needed
   community.docker.docker_secret:
     name: MNEMONIC
     data: "{{ railgun_seed }}"
     state: present
-  when: MNEMONIC not in docker_secrets
-  
+  when: '"MNEMONIC" not in docker_secrets.stdout'
+
+- name: Create docker .env file
+  template:
+    src: .env.j2
+    dest: /home/railgun/relayer/docker/.env
+    owner: railgun
+    group: railgun
+    mode: 0600
+
 - name: Build Docker images
   command:
     cmd: "./docker/build.sh"
