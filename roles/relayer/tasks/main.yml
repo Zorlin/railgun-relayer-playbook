@@ -72,6 +72,14 @@
     group: railgun
     mode: 0600
 
+- name: Create MY-CONFIG.ts file
+  template:
+    src: MY-CONFIG.ts.j2
+    dest: /home/railgun/relayer/src/MY-CONFIG.ts
+    owner: railgun
+    group: railgun
+    mode: 0644
+
 - name: Build Docker images
   command:
     cmd: "./docker/build.sh"
