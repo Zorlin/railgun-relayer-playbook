@@ -102,6 +102,22 @@
     group: railgun
     mode: 0600
 
+- name: Create a directory to hold appdata
+  file:
+    path: /home/railgun/relayer/docker/appdata
+    state: directory
+    owner: railgun
+    group: railgun
+    mode: 0700
+
+- name: Create a directory to hold Swag configuration and data
+  file:
+    path: /home/railgun/relayer/docker/appdata/swag
+    state: directory
+    owner: railgun
+    group: railgun
+    mode: 0700
+
 - name: Create MY-CONFIG.ts file
   template:
     src: MY-CONFIG.ts.j2
