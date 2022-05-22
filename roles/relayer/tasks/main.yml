@@ -1,5 +1,6 @@
 ---
 # Install the Railgun Relayer
+
 - name: Install prerequisite packages
   package:
     name:
@@ -27,6 +28,7 @@
 - name: Check out the Railgun repository
   ansible.builtin.git:
     repo: git@github.com:Railgun-Community/relayer.git
+    version: Zorlin/simplified
     dest: /home/railgun/relayer
   become: true
   become_user: railgun
@@ -40,22 +42,50 @@
     cmd: "docker secret ls"
   register: docker_secrets
 
-- name: Generate and store DB_ENCRYPTION_KEY secret if needed
-  shell:
-    cmd: "./docker/nodekey.sh | docker secret create DB_ENCRYPTION_KEY -"
-    chdir: "/home/railgun/relayer"
-  when: '"DB_ENCRYPTION_KEY" not in docker_secrets.stdout'
+- name: Check for existence of Docker .env file
+  stat:
+    path: "/home/railgun/relayer/docker/.env"
+  register: docker_env
 
-- name: Generate and store nodekey secret if needed
+- name: Fetch Docker .env file
+  fetch:
+    src: "/home/railgun/relayer/docker/.env"
+    dest: /tmp/rg.env
+    flat: true
+  when: docker_env.stat.exists
+
+- name: Read nodekey
+  set_fact:
+    railgun_nodekey: "{{ lookup('ini', 'nodekey', type='properties', file='/tmp/rg.env') }}"
+  when: docker_env.stat.exists
+
+- name: Generate nodekey secret if needed
   shell:
-    cmd: "./docker/nodekey.sh | docker secret create NODEKEY -"
+    cmd: "./scripts/nodekey.sh"
     chdir: "/home/railgun/relayer"
-  when: '"NODEKEY" not in docker_secrets.stdout'
+  when: railgun_nodekey is not defined or railgun_nodekey|length == 0
+  register: railgun_nodekey_gen
+
+- name: Store generated nodekey as a fact
+  set_fact:
+    railgun_nodekey: "{{ railgun_nodekey_gen.stdout }}"
+  when: railgun_nodekey_gen.stdout is defined
 
 - name: Create Railgun facts
   set_fact:
     railgun_public_ip: "{{ ipify_public_ip }}"
-    railgun_listen_ip: "{{ ipify_public_ip }}"
+
+- name: Generate and store DB_ENCRYPTION_KEY secret if needed
+  shell:
+    cmd: "./scripts/nodekey.sh | docker secret create DB_ENCRYPTION_KEY -"
+    chdir: "/home/railgun/relayer"
+  when: '"DB_ENCRYPTION_KEY" not in docker_secrets.stdout'
+
+- name: Store NODEKEY secret if needed
+  shell:
+    cmd: "echo {{ railgun_nodekey }} | docker secret create NODEKEY -"
+    chdir: "/home/railgun/relayer"
+  when: '"NODEKEY" not in docker_secrets.stdout'
 
 - name: Register MNEMONIC secret if needed
   community.docker.docker_secret:

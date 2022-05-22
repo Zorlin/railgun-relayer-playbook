@@ -10,16 +10,57 @@
   vars:
     nodejs_version: "16.x"
     mode: swarm
+    railgun_timezone: UTC
+    # If using a domain name, uncomment the following three variables.
+    railgun_subdomain: foo
+    railgun_basedomain: example.com
+    railgun_email: root@example.com
+    # The example given is for "foo.example.com", using root@example.com as the
+    # Let's Encrypt account email.
 
   vars_prompt:
     - name: railgun_seed
       prompt: "Please enter your seed. This will be securely stored"
       private: true
-      
+
+  pre_tasks:
+    - name: "Enter email address"
+      pause:
+        prompt: "If you are using a domain or subdomain, enter an email now, otherwise press [ENTER]"
+      register: prompt
+      no_log: true
+      run_once: true
+      when: railgun_email is not defined
+    - name: "Set email address"
+      set_fact:
+        railgun_email: "{{ prompt.user_input }}"
+      when: railgun_email is not defined
+    - name: "Enter base domain name"
+      pause:
+        prompt: "Please enter your node's base domain name, or leave it blank and press [ENTER] to use its IP"
+      register: prompt
+      no_log: true
+      run_once: true
+      when: railgun_basedomain is not defined
+    - name: "Set base domain name"
+      set_fact:
+        railgun_basedomain: "{{ prompt.user_input }}"
+      when: railgun_basedomain is not defined
+    - name: "Enter subdomain"
+      pause:
+        prompt: "If you are using a subdomain, please enter it. Otherwise, press [ENTER]."
+      register: prompt
+      no_log: true
+      run_once: true
+      when: railgun_subdomain is not defined
+    - name: "Set subdomain"
+      set_fact:
+        railgun_subdomain: "{{ prompt.user_input }}"
+      when: railgun_subdomain is not defined
+
   roles:
   - geerlingguy.git
   - geerlingguy.docker
-  - geerlingguy.nodejs
   - relayer
 
   tasks:
