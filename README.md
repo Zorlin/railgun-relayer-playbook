@@ -30,6 +30,8 @@ Here's an example:
 railgun.windowpa.in
 ```
 
+* Edit the `site.yml` file, entering your domain, subdomain and email details (optional, if you skip this step the playbook will ask you for those details)
+
 * Install the Ansible Galaxy roles and collections needed to run the playbook:
 
 `ansible-galaxy install -r roles/requirements.yml`
