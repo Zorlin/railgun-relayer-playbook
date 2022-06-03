@@ -28,7 +28,7 @@
 - name: Check out the Railgun repository
   ansible.builtin.git:
     repo: git@github.com:Railgun-Community/relayer.git
-    version: Zorlin/simplified
+    version: master
     dest: /home/railgun/relayer
   become: true
   become_user: railgun
