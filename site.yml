@@ -60,7 +60,7 @@
 
   roles:
   - geerlingguy.git
-  - geerlingguy.docker
+  - zorlin.docker
   - relayer
 
   tasks:

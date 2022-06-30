@@ -1,7 +1,9 @@
 ---
 roles:
   - name: geerlingguy.git
-  - name: geerlingguy.docker
+  - name: zorlin.docker
+    src: https://github.com/Zorlin/ansible-role-docker.git
+    version: master
   - name: geerlingguy.nodejs
 
 collections:
