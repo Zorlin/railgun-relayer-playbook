@@ -25,5 +25,5 @@ jobs:
           token: ${{ secrets.CI_TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            Commit "[${{ github.event.commits[0].message }}](https://github.com/${{ github.repository }}/commit/${{github.sha}})" 
             ❌ **${{ github.repository }}** - Workflow ${{ github.workflow }}
+            Commit "[${{ github.event.commits[0].message }}](https://github.com/${{ github.repository }}/commit/${{github.sha}})" 
