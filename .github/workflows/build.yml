@@ -34,5 +34,4 @@ jobs:
           format: markdown
           message: |
             **${{ needs.build.result }}** in "build" on **${{ github.repository }}** within workflow "${{ github.workflow }}"
-            Last commit was ${{ github.event.commits[0].message }}
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            Last commit was "[${{ github.event.commits[0].message }}](https://github.com/${{ github.repository }}/commit/${{github.sha}})"
