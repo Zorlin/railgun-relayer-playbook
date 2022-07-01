@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Hello World
+        run: echo Hello, world!
+
+  ci-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Telegram message with report
+        if: ${{ failure() }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.CI_TELEGRAM_TO }}
+          token: ${{ secrets.CI_TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
