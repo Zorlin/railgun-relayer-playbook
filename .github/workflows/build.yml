@@ -23,6 +23,7 @@ jobs:
           NEEDS_CONTEXT: ${{ toJSON(needs) }}
         run: |
           echo "$NEEDS_CONTEXT"
+
       - name: Send Telegram message with report
         uses: appleboy/telegram-action@master
         env:
@@ -31,4 +32,4 @@ jobs:
           to: ${{ secrets.CI_TELEGRAM_TO }}
           token: ${{ secrets.CI_TELEGRAM_TOKEN }}
           message: |
-            ${{ needs.build }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ needs.build.result }}
+            **${{ needs.build.result }}** in **${{ github.repository }}**: Workflow ID ${{ github.workflow }}: ${{ toJSON(needs) }}
