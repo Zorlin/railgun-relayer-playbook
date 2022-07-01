@@ -26,4 +26,5 @@ jobs:
           format: markdown
           message: |
             ❌ **${{ github.repository }}** - Workflow "${{ github.workflow }}"
-            Commit "[${{ github.event.commits[0].message }}](https://github.com/${{ github.repository }}/commit/${{github.sha}})" 
+            in commit "[${{ github.event.commits[0].message }}](https://github.com/${{ github.repository }}/commit/${{github.sha}})" 
+            in GitHub Actions run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
