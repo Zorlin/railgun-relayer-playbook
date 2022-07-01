@@ -18,6 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Needs context
+        env:
+          NEEDS_CONTEXT: ${{ toJSON(needs) }}
+        run: |
+          echo "$NEEDS_CONTEXT"
       - name: Send Telegram message with report
         uses: appleboy/telegram-action@master
         env:
@@ -27,4 +32,3 @@ jobs:
           token: ${{ secrets.CI_TELEGRAM_TOKEN }}
           message: |
             ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
-            "$NEEDS_CONTEXT"
