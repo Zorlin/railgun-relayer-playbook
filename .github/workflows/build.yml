@@ -13,12 +13,11 @@ jobs:
         run: echo Hello, world! && exit 1
 
   ci-report:
-    needs: build
+    if: always() && (needs.build.result == 'failure')
     runs-on: ubuntu-latest
 
     steps:
       - name: Send Telegram message with report
-        if: ${{ failure() }}
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.CI_TELEGRAM_TO }}
