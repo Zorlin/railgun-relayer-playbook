@@ -13,7 +13,7 @@ jobs:
         run: echo Hello, world! && exit 1
 
   ci-report:
-    if: always() && (needs.build.result == 'failure')
+    if: ${{ failure() }}
     needs: build
     runs-on: ubuntu-latest
 
