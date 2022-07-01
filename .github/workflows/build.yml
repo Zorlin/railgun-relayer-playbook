@@ -31,4 +31,4 @@ jobs:
           to: ${{ secrets.CI_TELEGRAM_TO }}
           token: ${{ secrets.CI_TELEGRAM_TOKEN }}
           message: |
-            ${{ needs[0] }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ needs[0].result }}
+            ${{ needs.build }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ needs.build.result }}
