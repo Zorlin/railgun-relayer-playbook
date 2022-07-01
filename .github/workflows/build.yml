@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Hello World
-        run: echo Hello, world! || exit 1
+        run: echo Hello, world! | exit 1
 
   ci-report:
     if: ${{ failure() }}
