@@ -12,26 +12,18 @@ jobs:
       - name: Hello World
         run: make
 
-  ci-report:
+  fail-report:
     if: ${{ failure() }}
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Needs context
-        env:
-          NEEDS_CONTEXT: ${{ toJSON(needs) }}
-        run: |
-          echo "$NEEDS_CONTEXT"
-
-      - name: Send Telegram message with report
+      - name: Send Telegram message with fail report
         uses: appleboy/telegram-action@master
-        env:
-          NEEDS_CONTEXT: ${{ toJSON(needs) }}
         with:
           to: ${{ secrets.CI_TELEGRAM_TO }}
           token: ${{ secrets.CI_TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            **${{ needs.build.result }}** in "build" on **${{ github.repository }}** within workflow "${{ github.workflow }}"
+            ❌ **${{ needs.build.result }}** in "build" on **${{ github.repository }}** within workflow "${{ github.workflow }}"
             Last commit was "[${{ github.event.commits[0].message }}](https://github.com/${{ github.repository }}/commit/${{github.sha}})" 
